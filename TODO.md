@@ -4,3 +4,7 @@
 
 * Implement providers:
     * Github
+
+* Run github action for testing
+
+* Provide help pages
