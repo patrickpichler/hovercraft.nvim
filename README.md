@@ -1,6 +1,6 @@
 # hovercraft.nvim
 
-`hovercraft.nvim` is a plug and play framework for writing custom hover providers. It brings a few
+`hovercraft.nvim` is a plug and play framework for writing custom hover provider. It brings a few
 providers out of the box, such as a LSP, as well as a Dictionary.
 
 It allows for basic customizations of the hover window (such as defining custom borders, set the max
@@ -29,15 +29,15 @@ via lazy.nvim:
             providers = {
                 {
                     'LSP',
-                    require('hovercraft.providers.lsp').new(),
+                    require('hovercraft.provider.lsp').new(),
                 },
                 {
                     'Man',
-                    require('hovercraft.providers.man').new(),
+                    require('hovercraft.provider.man').new(),
                 },
                 {
                     'Dictionary',
-                    require('hovercraft.providers.dictionary').new(),
+                    require('hovercraft.provider.dictionary').new(),
                 },
             }
         },
@@ -118,7 +118,7 @@ Example:
 local my_hovercraft = require('hovercraft.instance').new({
     providers = {
         providers = {
-            {'Dictionary', require('hovercraft.providers.dictionary').new()}
+            {'Dictionary', require('hovercraft.provider.dictionary').new()}
         }
     }
 })
@@ -129,19 +129,56 @@ vim.keymap.set('n', '<leader>k', function() my_hovercraft:hover() end)
 ## Providers
 
 ### LSP
-`require('hovercraft.providers.lsp')`
+`require('hovercraft.provider.lsp')`
 
 Builtin LSP
 
 ### Dictionary
-`require('hovercraft.providers.dictionary')`
+`require('hovercraft.provider.dictionary')`
 
 Shows definitions for valid words, by querying [dictionaryapi.dev](https://dictionaryapi.dev)
 
 ### ManPage
-`require('hovercraft.providers.man')`
+`require('hovercraft.provider.man')`
 
 Shows man page definitions of word under cursor for C, sh, zsh, tcl, fish and make.
+
+### Github Issue
+`require('hovercraft.provider.github.issue')`
+
+![](./assets/hovercraft_github_issue.png)
+
+Shows details about the issue under the cursor. It gets enabled for either `#(\d+)`, which will try
+to get the issue details by figuring out the current github repo, or `(\w+)/(\w+)#(\d+)`, which
+specifies the repo of the issue.
+
+The logic for detecting the current Github project is based the remotes of the local git project. We
+fetch the current remote url by running `git ls-remote --get-url`. Then we try to extract the Github
+repo name. If the repo has no issues enabled, we try getting it from the parent repository.
+
+### Github Repo
+`require('hovercraft.provider.github.repo')`
+
+![](./assets/hovercraft_github_repo.png)
+
+Fetches details about the repo from Github and diplays them. You can disable fetching the repo
+readme by passing in `fetch_readme = false` when calling the `new` method on the provider.
+
+Examples for when this provider activates:
+* `https://github.com/neovim/neovim`
+* `git@github.com:neovim/neovim.git`
+
+### Github User
+`require('hovercraft.provider.github.user')`
+
+![](./assets/hovercraft_github_user.png)
+
+Fetches details about the user from Github and display them. The regex for it to trigger is something
+along the line of `(?:TODO|FIX|FIXME)\(@?([\w_-]*)\)`. It also works for organizations.
+
+Here are some examples:
+* `https://github.com/neovim`
+* `-- TODO(@patrichpichler): this is a test`
 
 ## Creating a custom hover provider
 

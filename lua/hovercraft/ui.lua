@@ -139,7 +139,9 @@ function UI:_close_preview_autocmd(events, winnr, bufnrs)
     group = augroup,
     callback = function()
       if self.window_config and self.window_config.bufnr ~= vim.api.nvim_get_current_buf() then
-        self:hide()
+        vim.schedule(function()
+          self:hide()
+        end)
       end
     end,
   })
@@ -149,7 +151,9 @@ function UI:_close_preview_autocmd(events, winnr, bufnrs)
       group = augroup,
       buffer = bufnrs[2],
       callback = function()
-        self:hide()
+        vim.schedule(function()
+          self:hide()
+        end)
       end,
     })
   end
@@ -312,7 +316,7 @@ function UI:show_next(opts)
 
   local providers
 
-  -- TODO: this needs to be reworked, as the figuring out active providers is done twice
+  -- TODO: this needs to be reworked, as the figuring out which proivder is active is done twice
   if self.window_config and self.window_config.providers then
     providers = self.window_config.providers
   else

@@ -1,6 +1,4 @@
-local Dict = require('hovercraft.providers.dictionary')
-local Man = require('hovercraft.providers.man')
-local Lsp = require('hovercraft.providers.lsp')
+local Provider = require('hovercraft.provider')
 
 local M = {}
 
@@ -11,18 +9,12 @@ local M = {}
 local defaults = {
   providers = {
     providers = {
-      {
-        'LSP',
-        Lsp.new(),
-      },
-      {
-        'Man',
-        Man.new(),
-      },
-      {
-        'Dictionary',
-        Dict.new(),
-      },
+      { 'LSP',          Provider.Lsp.new(), },
+      { 'Man',          Provider.Man.new(), },
+      { 'Dictionary',   Provider.Dictionary.new(), },
+      { 'Github Issue', Provider.Github.Issue.new(), },
+      { 'Github Repo',  Provider.Github.Repo.new(), },
+      { 'Github User',  Provider.Github.User.new(), },
     }
   },
 
