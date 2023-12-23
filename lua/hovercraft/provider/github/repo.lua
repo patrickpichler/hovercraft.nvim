@@ -100,7 +100,7 @@ GithubRepo.execute = async.void(function(self, _, done)
   end
 end)
 
----@param opts { api?: GithubApi, fetch_readme?: boolean }
+---@param opts? { api?: GithubApi, fetch_readme?: boolean }
 ---@return Github.Repo
 function M.new(opts)
   opts = opts or {}

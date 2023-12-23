@@ -66,7 +66,7 @@ end
 
 function GithubIssue:_handle_issue(bufnr, issue, success_handler, failure_handler)
   ---@type Path
-  local path = Path.new(GithubUtil._get_buffer_path(bufnr))
+  local path = Path.new(util.get_buffer_path(bufnr))
   path = ((not path:is_dir() and path:parent()) or path)
 
   local target_path = (path:exists() and path or Path:new('.')):absolute()

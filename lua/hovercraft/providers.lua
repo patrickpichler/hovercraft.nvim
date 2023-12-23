@@ -18,16 +18,20 @@ local Providers = {}
 ---@alias Hovercraft.Provider.ExecuteFunction fun(self: Hovercraft.Provider, opts?: Hovercraft.Provider.ExecuteOptions, done: fun(result: Hovercraft.Provider.ExecuteResult))
 ---@alias Hovercraft.RegisteredProvider.ExecuteFunction fun(opts?: Hovercraft.Provider.ExecuteOptions): Hovercraft.Provider.ExecuteResult
 
+---@class Hover.Provider.IsEnabledOpts
+---@field bufnr integer
+---@field pos {[1]: integer, [2]: integer}
+
 ---@class Hovercraft.RegisteredProvider
 ---@field id string
 ---@field title string
 ---@field priority number
 ---@field provider Hovercraft.Provider
 ---@field execute Hovercraft.RegisteredProvider.ExecuteFunction
----@field is_enabled fun(bufnr: integer): boolean
+---@field is_enabled fun(opts: Hover.Provider.IsEnabledOpts): boolean
 
 ---@class Hovercraft.Provider
----@field is_enabled fun(self: Hovercraft.Provider, bufnr: integer): boolean
+---@field is_enabled fun(self: Hovercraft.Provider, opts: Hover.Provider.IsEnabledOpts): boolean
 ---@field execute Hovercraft.Provider.ExecuteFunction
 
 ---@alias Hovercraft.Provider.Function fun(opts: Hovercraft.Provider.ExecuteOptions, done: fun(result:Hovercraft.Provider.ExecuteResult))
@@ -94,8 +98,8 @@ function Providers:register(id, title, provider, priority)
     execute = async.wrap(function(opts, done)
       return p:execute(opts, done)
     end, 2),
-    is_enabled = function(bufnr)
-      return p:is_enabled(bufnr)
+    is_enabled = function(opts)
+      return p:is_enabled(opts)
     end
   }
 

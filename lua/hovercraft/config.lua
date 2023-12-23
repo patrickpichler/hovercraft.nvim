@@ -15,6 +15,7 @@ local defaults = {
       { 'Github Issue', Provider.Github.Issue.new(), },
       { 'Github Repo',  Provider.Github.Repo.new(), },
       { 'Github User',  Provider.Github.User.new(), },
+      { 'Git Blame',    Provider.GitBlame.new(), },
     }
   },
 

@@ -86,7 +86,9 @@ local function create_params(bufnr, row, col)
   end
 end
 
-function Lsp:is_enabled(bufnr)
+function Lsp:is_enabled(opts)
+  local bufnr = opts.bufnr
+
   for _, client in pairs(get_clients()) do
     if client.supports_method('textDocument/hover', { bufnr = bufnr }) then
       return true

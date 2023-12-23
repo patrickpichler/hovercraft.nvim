@@ -161,12 +161,12 @@ end
 
 ---@param bufnr number
 ---@return string[]
-function UI:_get_active_provider_ids(bufnr)
+function UI:_get_active_provider_ids(bufnr, pos)
   ---@type string[]
   local result = {}
 
   for _, provider in ipairs(self.providers:get_providers()) do
-    if provider.is_enabled(bufnr) then
+    if provider.is_enabled({bufnr = bufnr, pos = pos}) then
       table.insert(result, provider.id)
     end
   end
@@ -185,26 +185,25 @@ function UI:show(opts)
   self.current_run = current_run
 
   local bufnr = vim.api.nvim_get_current_buf()
-
-  local active_providers
-
-  if self.window_config and self.window_config.providers then
-    active_providers = self.window_config.providers
-  else
-    active_providers = self:_get_active_provider_ids(bufnr)
-  end
-
-  local provider_id = opts.current_provider or active_providers[1]
-  local provider = self.providers:get_provider(provider_id)
-
-  if not provider then
-    vim.notify(string.format('no provider for id "%s"!', provider_id))
-    return
-  end
-
   local pos = vim.api.nvim_win_get_cursor(0)
 
   async.void(function()
+    local active_providers
+
+    if self.window_config and self.window_config.providers then
+      active_providers = self.window_config.providers
+    else
+      active_providers = self:_get_active_provider_ids(bufnr, pos)
+    end
+
+    local provider_id = opts.current_provider or active_providers[1]
+    local provider = self.providers:get_provider(provider_id)
+
+    if not provider then
+      vim.notify(string.format('no provider for id "%s"!', provider_id))
+      return
+    end
+
     local result = provider.execute({
       bufnr = bufnr,
       pos = pos,

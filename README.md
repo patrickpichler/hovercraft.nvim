@@ -180,6 +180,13 @@ Here are some examples:
 * `https://github.com/neovim`
 * `-- TODO(@patrichpichler): this is a test`
 
+### Git Blame
+`require('hovercraft.provider.git_blame')`
+
+![](./assets/hovercraft_git_blame.png)
+
+Shows details from Git blame about the current line.
+
 ## Creating a custom hover provider
 
 There are multiple ways of registering a custom hover provider. The simplest is by passing in a

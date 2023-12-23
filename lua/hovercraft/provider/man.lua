@@ -9,12 +9,12 @@ local M = {}
 local ManProvider = {}
 ManProvider.__index = ManProvider
 
---- @param bufnr integer
+--- @param opts Hover.Provider.IsEnabledOpts
 --- @return boolean
-function ManProvider:is_enabled(bufnr)
+function ManProvider:is_enabled(opts)
   return vim.tbl_contains({
     'c', 'sh', 'zsh', 'fish', 'tcl', 'make',
-  }, vim.bo[bufnr].filetype)
+  }, vim.bo[opts.bufnr].filetype)
 end
 
 ManProvider.execute = async.void(function(_, opts, done)

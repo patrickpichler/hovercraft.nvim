@@ -85,12 +85,6 @@ function M._extract_repo_info(word)
   return nil
 end
 
-M._get_buffer_path = async.wrap(function(bufnr, done)
-  vim.api.nvim_buf_call(bufnr, function()
-    done(vim.fn.expand('%:p'))
-  end)
-end, 2)
-
 function M.format_error(result)
   if result.error == 'NotFound' then
     return { string.format('--- %s not found ---', result.kind) }
