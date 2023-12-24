@@ -166,7 +166,7 @@ function UI:_get_active_provider_ids(bufnr, pos)
   local result = {}
 
   for _, provider in ipairs(self.providers:get_providers()) do
-    if provider.is_enabled({bufnr = bufnr, pos = pos}) then
+    if provider.is_enabled({ bufnr = bufnr, pos = pos }) then
       table.insert(result, provider.id)
     end
   end
@@ -194,6 +194,11 @@ function UI:show(opts)
       active_providers = self.window_config.providers
     else
       active_providers = self:_get_active_provider_ids(bufnr, pos)
+    end
+
+    if #active_providers == 0 then
+      UI._show_no_provider_warning()
+      return
     end
 
     local provider_id = opts.current_provider or active_providers[1]
@@ -322,6 +327,11 @@ function UI:show_next(opts)
     providers = self:_get_active_provider_ids(bufnr)
   end
 
+  if #providers == 0 then
+    UI._show_no_provider_warning()
+    return
+  end
+
   if self:is_visible() then
     -- if the window is visible, window_config will always be set
     local current_provider = self.window_config.active_provider
@@ -335,6 +345,10 @@ function UI:show_next(opts)
   self:show({ current_provider = provider_id })
 end
 
+function UI._show_no_provider_warning()
+  vim.print('No active providers for line!')
+end
+
 function UI:show_select()
   local bufnr = vim.api.nvim_get_current_buf()
 
@@ -346,6 +360,11 @@ function UI:show_select()
     providers = self.window_config.providers
   else
     providers = self:_get_active_provider_ids(bufnr)
+  end
+
+  if #providers == 0 then
+    UI._show_no_provider_warning()
+    return
   end
 
   local providers_to_select = {}
