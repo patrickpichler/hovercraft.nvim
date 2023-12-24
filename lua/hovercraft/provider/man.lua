@@ -46,8 +46,6 @@ ManProvider.execute = async.void(function(_, opts, done)
 
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
-  vim.notify(vim.inspect(lines[1]))
-
   done { lines = lines, filetype = "man" }
 end)
 

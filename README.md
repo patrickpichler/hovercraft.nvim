@@ -10,7 +10,6 @@ This plugin is heavily inspired by [hover.nvim](https://github.com/lewis6991/hov
 to lewis6991 for providing inspiration.
 
 ![](./assets/hovercraft.png)
-![](./assets/hovercraft_dict.png)
 
 ## Setup
 
@@ -131,15 +130,21 @@ vim.keymap.set('n', '<leader>k', function() my_hovercraft:hover() end)
 ### LSP
 `require('hovercraft.provider.lsp')`
 
+![](./assets/hovercraft_lsp.png)
+
 Builtin LSP
 
 ### Dictionary
 `require('hovercraft.provider.dictionary')`
 
+![](./assets/hovercraft_dictionary.png)
+
 Shows definitions for valid words, by querying [dictionaryapi.dev](https://dictionaryapi.dev)
 
 ### ManPage
 `require('hovercraft.provider.man')`
+
+![](./assets/hovercraft_man.png)
 
 Shows man page definitions of word under cursor for C, sh, zsh, tcl, fish and make.
 
