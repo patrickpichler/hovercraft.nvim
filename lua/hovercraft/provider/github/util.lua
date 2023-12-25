@@ -100,7 +100,7 @@ function M.format_error(result)
 
   if result.result then
     table.insert(lines, '---')
-    util.concat(lines, util.split_lines(result.result))
+    util.add_all(lines, util.split_lines(result.result))
   end
 
   return lines

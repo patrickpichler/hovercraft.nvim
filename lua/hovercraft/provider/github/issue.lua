@@ -114,7 +114,7 @@ local function format_github_issue_lines(issue)
   }
 
   if issue.body and issue.body:len() > 0 then
-    util.concat(lines, {
+    util.add_all(lines, {
       '----',
       issue.body,
     })

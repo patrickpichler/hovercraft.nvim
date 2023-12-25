@@ -91,7 +91,7 @@ local function format_github_user(user)
   if user.bio and user.bio ~= vim.NIL then
     table.insert(lines, '')
     table.insert(lines, '---')
-    util.concat(lines, util.split_lines(user.bio))
+    util.add_all(lines, util.split_lines(user.bio))
   end
 
   return lines

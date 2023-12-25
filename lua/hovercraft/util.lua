@@ -7,7 +7,7 @@ function M.split_lines(value)
   return vim.split(value, '\n', {})
 end
 
-function M.concat(target, to_add)
+function M.add_all(target, to_add)
   for _, l in ipairs(to_add) do
     table.insert(target, l)
   end

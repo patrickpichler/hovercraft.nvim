@@ -25,17 +25,24 @@ GitBlame.is_enabled = async.wrap(function(_, opts, done)
   end)()
 end, 3)
 
-local function format_commit(commit)
+local function format_commit(commit, message)
   local commit_date = os.date('%c', tonumber(commit.data['commit-time']))
 
-  return {
-    string.format('**%s**', commit.sha),
+  local result = {
+    string.format('**Commit**: %s', commit.sha),
     string.format('**Author:** %s', commit.data['author']),
     string.format('**Author-Mail:** %s', commit.data['author-mail']),
     string.format('**Committer:** %s', commit.data['committer']),
     string.format('**Committer-Mail:** %s', commit.data['committer-mail']),
     string.format('**Commit-Date:** %s', commit_date),
   }
+
+  if message and #message > 0 then
+    table.insert(result, '---')
+    util.add_all(result, message)
+  end
+
+  return result
 end
 
 local function first(t)
@@ -59,7 +66,7 @@ local function format_error(result)
 
   if result.result then
     table.insert(lines, '---')
-    util.concat(lines, util.split_lines(result.result))
+    util.add_all(lines, result.result)
   end
 
   return lines
@@ -84,7 +91,14 @@ GitBlame.execute = async.void(function(_, opts, done)
     return
   end
 
-  done({ lines = format_commit(commit), filetype = 'markdown' })
+  local message = Git.git_commit_message({ cwd = cwd, ref = commit.sha })
+
+  if message.error ~= nil then
+    done({ lines = format_error(message), filetype = 'markdown' })
+    return
+  end
+
+  done({ lines = format_commit(commit, message.message), filetype = 'markdown' })
 end)
 
 function M.new(opts)

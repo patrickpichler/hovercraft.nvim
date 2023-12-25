@@ -216,4 +216,41 @@ M.git_blame = async.wrap(function(opts, done)
   }):start()
 end, 2)
 
+M.git_commit_message = async.wrap(function(opts, done)
+  opts = opts or {}
+
+  vim.validate {
+    ref = { opts.ref, 'string' },
+    cwd = { opts.cwd, { 'string', 'nil' } },
+  }
+
+  Job:new({
+    command = 'git',
+    args = {
+      'rev-list',
+      '--max-count=1',
+      '--no-commit-header',
+      '--format=%B',
+      opts.ref,
+    },
+    cwd = opts.cwd or '.',
+    on_exit = function(j, code)
+      if code ~= 0 then
+        log.warn('failed to get git commit message')
+        log.warn(table.concat(j:stderr_result(), '\n'))
+        vim.schedule(function()
+          done { error = 'JobFailed', code = code, result = j:stderr_result() }
+        end)
+        return
+      end
+
+      local job_result = j:result()
+
+      vim.schedule(function()
+        done { message = job_result }
+      end)
+    end
+  }):start()
+end, 2)
+
 return M
