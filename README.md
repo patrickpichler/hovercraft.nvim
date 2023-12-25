@@ -16,42 +16,44 @@ to lewis6991 for providing inspiration.
 via lazy.nvim:
 ```lua
 {
-    'patrickpichler/hovercraft.nvim',
+  'patrickpichler/hovercraft.nvim',
 
-    dependencies = {
-      { 'nvim-lua/plenary.nvim' },
-    },
+  dependencies = {
+    { 'nvim-lua/plenary.nvim' },
+  },
 
-    -- this is the default config and can be skipped
-    opts = {
+  -- this is the default config and can be skipped
+  opts = function()
+    return {
+      providers = {
         providers = {
-            providers = {
-                {
-                    'LSP',
-                    require('hovercraft.provider.lsp').new(),
-                },
-                {
-                    'Man',
-                    require('hovercraft.provider.man').new(),
-                },
-                {
-                    'Dictionary',
-                    require('hovercraft.provider.dictionary').new(),
-                },
-            }
-        },
-
-        window = {
-            border = 'single',
-        },
-
-        keys = {
-            { '<C-u>',   function() require('hovercraft').scroll({ delta = -4 }) end },
-            { '<C-d>',   function() require('hovercraft').scroll({ delta = 4 }) end },
-            { '<TAB>',   function() require('hovercraft').hover_next() end },
-            { '<S-TAB>', function() require('hovercraft').hover_next({ step = -1 }) end },
+          {
+            'LSP',
+            require('hovercraft.provider.lsp').new(),
+          },
+          {
+            'Man',
+            require('hovercraft.provider.man').new(),
+          },
+          {
+            'Dictionary',
+            require('hovercraft.provider.dictionary').new(),
+          },
         }
-    },
+      },
+
+      window = {
+        border = 'single',
+      },
+
+      keys = {
+        { '<C-u>',   function() require('hovercraft').scroll({ delta = -4 }) end },
+        { '<C-d>',   function() require('hovercraft').scroll({ delta = 4 }) end },
+        { '<TAB>',   function() require('hovercraft').hover_next() end },
+        { '<S-TAB>', function() require('hovercraft').hover_next({ step = -1 }) end },
+      }
+    }
+  end,
 }
 ```
 
@@ -261,29 +263,31 @@ return M
 
 ```lua
 {
-    'patrickpichler/hovercraft.nvim',
+  'patrickpichler/hovercraft.nvim',
 
-    dependencies = {
-      { 'nvim-lua/plenary.nvim' },
-    },
+  dependencies = {
+    { 'nvim-lua/plenary.nvim' },
+  },
 
-    -- this is the default config and can be skipped
-    opts = {
+  -- this is the default config and can be skipped
+  opts = function()
+    return {
+      providers = {
         providers = {
-            providers = {
-                {
-                    'Dummy',
-                    function(opts, done)
-                        done({ lines = { 'This', 'is *great*' }, filetype = 'markdown' })
-                    end,
-                },
-                {
-                    'Dummy1',
-                    require('dummy').new({'Hello'})
-                },
-            }
-        },
-    },
+          {
+            'Dummy',
+            function(opts, done)
+              done({ lines = { 'This', 'is *great*' }, filetype = 'markdown' })
+            end,
+          },
+          {
+            'Dummy1',
+            require('dummy').new({ 'Hello' })
+          },
+        }
+      },
+    }
+  end,
 }
 ```
 
