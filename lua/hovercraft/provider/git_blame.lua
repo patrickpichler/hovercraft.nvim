@@ -8,12 +8,6 @@ local M = {}
 local GitBlame = {}
 GitBlame.__index = GitBlame
 
--- GitBlame.is_enabled = async.wrap(function(opts, done)
---   local path = Path:new(util.get_buffer_path(opts.bufnr))
---
---   done(Git.is_repo({ cwd = path:absolute() }))
--- end, 2)
-
 GitBlame.is_enabled = async.wrap(function(_, opts, done)
   async.void(function()
     local path = Path:new(util.get_buffer_path(opts.bufnr))
@@ -72,7 +66,7 @@ local function format_error(result)
   return lines
 end
 
-GitBlame.execute = async.void(function(_, opts, done)
+GitBlame.execute = async.void(function(self, opts, done)
   local file_path = Path:new(util.get_buffer_path(opts.bufnr))
 
   local cwd = file_path:parent():absolute()
@@ -91,18 +85,28 @@ GitBlame.execute = async.void(function(_, opts, done)
     return
   end
 
-  local message = Git.git_commit_message({ cwd = cwd, ref = commit.sha })
+  local message = nil
 
-  if message.error ~= nil then
-    done({ lines = format_error(message), filetype = 'markdown' })
-    return
+  if self.show_commit_message then
+    local message_result = Git.git_commit_message({ cwd = cwd, ref = commit.sha })
+
+    if message_result.error ~= nil then
+      done({ lines = format_error(message_result), filetype = 'markdown' })
+      return
+    end
+
+    message = message_result.message
   end
 
-  done({ lines = format_commit(commit, message.message), filetype = 'markdown' })
+  done({ lines = format_commit(commit, message), filetype = 'markdown' })
 end)
 
 function M.new(opts)
-  return setmetatable({}, GitBlame)
+  opts = opts or {}
+
+  return setmetatable({
+    show_commit_message = opts.show_commit_message or true
+  }, GitBlame)
 end
 
 return M

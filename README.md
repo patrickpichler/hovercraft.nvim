@@ -192,6 +192,9 @@ Here are some examples:
 
 Shows details from Git blame about the current line.
 
+You can disble it to also display the commit message, by passing in `show_commit_message=false` when
+constructing the provider.
+
 ## Creating a custom hover provider
 
 There are multiple ways of registering a custom hover provider. The simplest is by passing in a
