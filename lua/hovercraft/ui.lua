@@ -243,6 +243,10 @@ function UI:show(opts)
     local window_opts = vim.tbl_deep_extend('force', self.config, opts, { close_events = {} })
     local floating_bufnr, floating_winnr = vim.lsp.util.open_floating_preview(contents, filetype, window_opts)
 
+    if result.customize then
+      result.customize({ bufnr = bufnr, winnr = floating_winnr })
+    end
+
     self:_close_preview_autocmd(
       { 'CursorMoved', 'CursorMovedI', 'InsertCharPre' },
       floating_winnr,

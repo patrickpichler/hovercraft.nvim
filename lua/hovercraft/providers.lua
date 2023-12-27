@@ -14,6 +14,7 @@ local Providers = {}
 --- @class Hovercraft.Provider.ExecuteResult
 --- @field lines? string[]
 --- @field filetype? string
+--- @field customize? fun(opts: {bufnr: integer, winnr: integer})
 
 ---@alias Hovercraft.Provider.ExecuteFunction fun(self: Hovercraft.Provider, opts?: Hovercraft.Provider.ExecuteOptions, done: fun(result: Hovercraft.Provider.ExecuteResult))
 ---@alias Hovercraft.RegisteredProvider.ExecuteFunction fun(opts?: Hovercraft.Provider.ExecuteOptions): Hovercraft.Provider.ExecuteResult
