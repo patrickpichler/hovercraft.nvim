@@ -323,30 +323,32 @@ function UI:show_next(opts)
   local provider_id
 
   local providers
+  local pos = vim.api.nvim_win_get_cursor(0)
 
-  -- TODO: this needs to be reworked, as the figuring out which proivder is active is done twice
-  if self.window_config and self.window_config.providers then
-    providers = self.window_config.providers
-  else
-    providers = self:_get_active_provider_ids(bufnr)
-  end
+  async.void(function()
+    -- TODO: this needs to be reworked, as the figuring out which proivder is active is done twice
+    if self.window_config and self.window_config.providers then
+      providers = self.window_config.providers
+    else
+      providers = self:_get_active_provider_ids(bufnr, pos)
+    end
 
-  if #providers == 0 then
-    UI._show_no_provider_warning()
-    return
-  end
+    if #providers == 0 then
+      UI._show_no_provider_warning()
+      return
+    end
 
-  if self:is_visible() then
-    -- if the window is visible, window_config will always be set
-    local current_provider = self.window_config.active_provider
+    if self:is_visible() then
+      -- if the window is visible, window_config will always be set
+      local current_provider = self.window_config.active_provider
 
-    provider_id = M._get_next_provider_id(providers, current_provider, opts.step, opts.cycle)
-  else
-    provider_id = providers[1]
-  end
+      provider_id = M._get_next_provider_id(providers, current_provider, opts.step, opts.cycle)
+    else
+      provider_id = providers[1]
+    end
 
-
-  self:show({ current_provider = provider_id })
+    self:show({ current_provider = provider_id })
+  end)()
 end
 
 function UI._show_no_provider_warning()
@@ -355,43 +357,46 @@ end
 
 function UI:show_select()
   local bufnr = vim.api.nvim_get_current_buf()
+  local pos = vim.api.nvim_win_get_position(0)
 
   ---@type string[]
   local providers
 
-  -- TODO: this needs to be reworked, as the figuring out active providers is done twice
-  if self.window_config and self.window_config.providers then
-    providers = self.window_config.providers
-  else
-    providers = self:_get_active_provider_ids(bufnr)
-  end
-
-  if #providers == 0 then
-    UI._show_no_provider_warning()
-    return
-  end
-
-  local providers_to_select = {}
-
-  for _, p in ipairs(providers) do
-    table.insert(providers_to_select, {
-      id = p,
-      title = self.providers:get_provider(p).title or p
-    })
-  end
-
-  vim.ui.select(providers_to_select, {
-      prompt = 'Select hover provider:',
-      format_item = function(item)
-        return item.title
-      end,
-    },
-    function(choice)
-      if choice then
-        self:show({ current_provider = choice.id })
-      end
+  async.void(function()
+    -- TODO: this needs to be reworked, as the figuring out active providers is done twice
+    if self.window_config and self.window_config.providers then
+      providers = self.window_config.providers
+    else
+      providers = self:_get_active_provider_ids(bufnr, pos)
     end
-  )
+
+    if #providers == 0 then
+      UI._show_no_provider_warning()
+      return
+    end
+
+    local providers_to_select = {}
+
+    for _, p in ipairs(providers) do
+      table.insert(providers_to_select, {
+        id = p,
+        title = self.providers:get_provider(p).title or p
+      })
+    end
+
+    vim.ui.select(providers_to_select, {
+        prompt = 'Select hover provider:',
+        format_item = function(item)
+          return item.title
+        end,
+      },
+      function(choice)
+        if choice then
+          self:show({ current_provider = choice.id })
+        end
+      end
+    )
+  end)()
 end
 
 ---@param ui Hovercraft.UI
