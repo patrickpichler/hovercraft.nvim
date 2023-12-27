@@ -5,4 +5,5 @@ return {
   GitBlame = require('hovercraft.provider.git.blame'),
   Git = require('hovercraft.provider.git'),
   Github = require('hovercraft.provider.github'),
+  Diagnostics = require('hovercraft.provider.diagnostics'),
 }
