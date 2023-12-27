@@ -22,6 +22,13 @@ function Lsp:is_enabled(opts)
 end
 
 function Lsp:execute(opts, done)
+  local clients = util.get_clients({ bufnr = opts.bufnr })
+
+  if #clients == 0 then
+    done()
+    return
+  end
+
   local row, col = opts.pos[1] - 1, opts.pos[2]
 
   util.buf_request_all(
@@ -41,7 +48,7 @@ function Lsp:execute(opts, done)
       -- no results
       done()
     end,
-    util.get_clients({ bufnr = opts.bufnr })
+    clients
   )
 end
 
