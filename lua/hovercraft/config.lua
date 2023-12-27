@@ -9,13 +9,13 @@ local M = {}
 local defaults = {
   providers = {
     providers = {
-      { 'LSP',          Provider.Lsp.new(), },
+      { 'LSP',          Provider.Lsp.Hover.new(), },
       { 'Man',          Provider.Man.new(), },
       { 'Dictionary',   Provider.Dictionary.new(), },
       { 'Github Issue', Provider.Github.Issue.new(), },
       { 'Github Repo',  Provider.Github.Repo.new(), },
       { 'Github User',  Provider.Github.User.new(), },
-      { 'Git Blame',    Provider.GitBlame.new(), },
+      { 'Git Blame',    Provider.Git.Blame.new(), },
     }
   },
 

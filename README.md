@@ -29,7 +29,7 @@ via lazy.nvim:
         providers = {
           {
             'LSP',
-            require('hovercraft.provider.lsp').new(),
+            require('hovercraft.provider.lsp.hover').new(),
           },
           {
             'Man',
@@ -130,7 +130,7 @@ vim.keymap.set('n', '<leader>k', function() my_hovercraft:hover() end)
 ## Providers
 
 ### LSP
-`require('hovercraft.provider.lsp')`
+`require('hovercraft.provider.lsp.hover')`
 
 ![](./assets/hovercraft_lsp.png)
 
@@ -188,7 +188,7 @@ Here are some examples:
 * `-- TODO(@patrichpichler): this is a test`
 
 ### Git Blame
-`require('hovercraft.provider.git_blame')`
+`require('hovercraft.provider.git.blame')`
 
 ![](./assets/hovercraft_git_blame.png)
 
