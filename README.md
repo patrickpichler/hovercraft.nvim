@@ -127,6 +127,43 @@ local my_hovercraft = require('hovercraft.instance').new({
 vim.keymap.set('n', '<leader>k', function() my_hovercraft:hover() end)
 ```
 
+### Enter focus popup when already displayed
+
+`hovercraft.nvim` doesn't provide an out of the box way of focusing an already visible popup, but
+it can be easily achieved with some custom code. Simply bind the following function to whatever key
+you like:
+
+```lua
+function()
+  local hovercraft = require('hovercraft')
+
+  if hovercraft.is_visible() then
+    hovercraft.enter_popup()
+  else
+    hovercraft.hover()
+  end
+end
+```
+
+Here is the full example how to use it with `lazy.nvim`:
+```lua
+{
+  'patrickpichler/hovercraft.nvim',
+
+  keys = {
+    { 'K', function()
+      local hovercraft = require('hovercraft')
+
+      if hovercraft.is_visible() then
+        hovercraft.enter_popup()
+      else
+        hovercraft.hover()
+      end
+    end },
+  },
+}
+```
+
 ## Providers
 
 ### LSP
