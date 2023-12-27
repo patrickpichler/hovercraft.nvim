@@ -24,14 +24,27 @@ GitBlame.is_enabled = async.wrap(function(_, opts, done)
 
     local cwd = file_path:parent():absolute()
 
-    local result = Git.git_blame({ cwd = cwd, line = { opts.pos[1] }, file = file_path:absolute() })
+    local blame_result = Git.git_blame({ cwd = cwd, line = { opts.pos[1] }, file = file_path:absolute() })
 
-    local commit = first(result.commits)
-
-    if result.error ~= nil or not commit then
+    if blame_result.error then
       done(false)
       return
     end
+
+    local commits = blame_result.result.commits
+
+    if not commits then
+      done(false)
+      return
+    end
+
+    local commit = first(commits)
+
+    if not commit then
+      done(false)
+      return
+    end
+
 
     done(commit.sha ~= dummy_commit_sha)
   end)()
@@ -88,7 +101,7 @@ GitBlame.execute = async.void(function(self, opts, done)
     return
   end
 
-  local commit = first(result.commits)
+  local commit = first(result.result.commits)
 
   if not commit then
     done({ lines = { '--- No commit data ---' }, filetype = 'markdown' })

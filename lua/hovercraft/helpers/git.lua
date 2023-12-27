@@ -3,8 +3,11 @@ local Job = require('plenary.job')
 
 local log = require('hovercraft.dev').log
 
-
 local M = {}
+
+local Error = {
+  JobFailed = 'JobFailed',
+}
 
 M.list_remotes = async.wrap(function(opts, done)
   opts = opts or {}
@@ -15,10 +18,8 @@ M.list_remotes = async.wrap(function(opts, done)
     cwd = opts.cwd or '.',
     on_exit = function(j, code)
       if code ~= 0 then
-        log.warn('failed to list remotes')
-        log.warn(table.concat(j:stderr_result(), '\n'))
         vim.schedule(function()
-          done()
+          done { error = Error.JobFailed, result = j:stderr_result() }
         end)
         return
       end
@@ -26,7 +27,7 @@ M.list_remotes = async.wrap(function(opts, done)
       local result = j:result()
 
       vim.schedule(function()
-        done(result)
+        done { result = result }
       end)
     end
   }):start()
@@ -47,10 +48,8 @@ M.remote_url = async.wrap(function(opts, done)
     cwd = opts.cwd or '.',
     on_exit = function(j, code)
       if code ~= 0 then
-        log.warn('failed to retrieve remote url')
-        log.warn(table.concat(j:stderr_result(), '\n'))
         vim.schedule(function()
-          done()
+          done { error = Error.JobFailed, result = j:stderr_result() }
         end)
         return
       end
@@ -58,12 +57,12 @@ M.remote_url = async.wrap(function(opts, done)
       local result = j:result()
 
       if #result > 1 then
-        log.warn('result has more than a single line (i am going to use the first):')
-        log.warn(result)
+        log.info('result has more than a single line (i am going to use the first):')
+        log.info(result)
       end
 
       vim.schedule(function()
-        done(result[1])
+        done { result = result[1] }
       end)
     end
   }):start()
@@ -78,11 +77,8 @@ M.find_repo_root = async.wrap(function(opts, done)
     cwd = opts.cwd or '.',
     on_exit = function(j, code)
       if code ~= 0 then
-        log.warn('failed to retrieve repo root')
-        log.warn(table.concat(j:stderr_result(), '\n'))
-
         vim.schedule(function()
-          done()
+          done { error = Error.JobFailed, result = j:stderr_result() }
         end)
         return
       end
@@ -90,12 +86,12 @@ M.find_repo_root = async.wrap(function(opts, done)
       local result = j:result()
 
       if #result > 1 then
-        log.warn('result has more than a single line (i am going to use the first):')
-        log.warn(result)
+        log.info('result has more than a single line (i am going to use the first):')
+        log.info(result)
       end
 
       vim.schedule(function()
-        done(result[1])
+        done { result = result[1] }
       end)
     end
   }):start()
@@ -110,7 +106,7 @@ M.is_repo = async.wrap(function(opts, done)
     cwd = opts.cwd or '.',
     on_exit = function(_, code)
       vim.schedule(function()
-        done(code == 0)
+        done { result = code == 0 }
       end)
     end
   }):start()
@@ -197,8 +193,6 @@ M.git_blame = async.wrap(function(opts, done)
     cwd = opts.cwd or '.',
     on_exit = function(j, code)
       if code ~= 0 then
-        log.warn('failed to perform git blame')
-        log.warn(table.concat(j:stderr_result(), '\n'))
         vim.schedule(function()
           done { error = 'JobFailed', status_code = code, result = j:stderr_result() }
         end)
@@ -210,7 +204,7 @@ M.git_blame = async.wrap(function(opts, done)
       local lines, commits = M._parse_git_blame_output(job_result)
 
       vim.schedule(function()
-        done { lines = lines, commits = commits }
+        done { result = { lines = lines, commits = commits } }
       end)
     end
   }):start()
@@ -236,8 +230,6 @@ M.git_commit_message = async.wrap(function(opts, done)
     cwd = opts.cwd or '.',
     on_exit = function(j, code)
       if code ~= 0 then
-        log.warn('failed to get git commit message')
-        log.warn(table.concat(j:stderr_result(), '\n'))
         vim.schedule(function()
           done { error = 'JobFailed', code = code, result = j:stderr_result() }
         end)
@@ -247,7 +239,7 @@ M.git_commit_message = async.wrap(function(opts, done)
       local job_result = j:result()
 
       vim.schedule(function()
-        done { message = job_result }
+        done { result = job_result }
       end)
     end
   }):start()

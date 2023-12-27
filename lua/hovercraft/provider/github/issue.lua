@@ -71,19 +71,19 @@ function GithubIssue:_handle_issue(bufnr, issue, success_handler, failure_handle
 
   local target_path = (path:exists() and path or Path:new('.')):absolute()
 
-  if not Git.is_repo({ cwd = target_path }) then
+  if not Git.is_repo({ cwd = target_path }).result then
     failure_handler({ error = ERRORS.NoGitRepo, result = string.format('`%s` is not a git repo', target_path) })
     return
   end
 
-  local remote = Git.remote_url({ cwd = target_path })
+  local remote_result = Git.remote_url({ cwd = target_path })
 
-  if not remote then
+  if remote_result.error then
     failure_handler { error = ERRORS.CannotExtractRemote, result = string.format('cannot extract remote url for `%s`', target_path) }
     return
   end
 
-  local info = GithubUtil._extract_repo_info(remote)
+  local info = GithubUtil._extract_repo_info(remote_result.result)
 
   if not info then
     failure_handler { error = ERRORS.NoGitRepo, result = string.format('cannot extract github repo for url `%s`', remote) }
