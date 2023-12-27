@@ -244,7 +244,7 @@ function UI:show(opts)
     local floating_bufnr, floating_winnr = vim.lsp.util.open_floating_preview(contents, filetype, window_opts)
 
     if result.customize then
-      result.customize({ bufnr = bufnr, winnr = floating_winnr })
+      result.customize({ bufnr = floating_bufnr, winnr = floating_winnr })
     end
 
     self:_close_preview_autocmd(
