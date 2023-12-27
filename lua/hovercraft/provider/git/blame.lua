@@ -8,14 +8,32 @@ local M = {}
 local GitBlame = {}
 GitBlame.__index = GitBlame
 
+local dummy_commit_sha = '0000000000000000000000000000000000000000'
+
+local function first(t)
+  for _, v in pairs(t) do
+    return v
+  end
+
+  return nil
+end
+
 GitBlame.is_enabled = async.wrap(function(_, opts, done)
   async.void(function()
-    local path = Path:new(util.get_buffer_path(opts.bufnr))
-    path = ((not path:is_dir() and path:parent()) or path)
+    local file_path = Path:new(util.get_buffer_path(opts.bufnr))
 
-    local target_path = (path:exists() and path or Path:new('.')):absolute()
+    local cwd = file_path:parent():absolute()
 
-    done(Git.is_repo({ cwd = target_path }))
+    local result = Git.git_blame({ cwd = cwd, line = { opts.pos[1] }, file = file_path:absolute() })
+
+    local commit = first(result.commits)
+
+    if result.error ~= nil or not commit then
+      done(false)
+      return
+    end
+
+    done(commit.sha ~= dummy_commit_sha)
   end)()
 end, 3)
 
@@ -37,14 +55,6 @@ local function format_commit(commit, message)
   end
 
   return result
-end
-
-local function first(t)
-  for _, v in pairs(t) do
-    return v
-  end
-
-  return nil
 end
 
 local function format_error(result)
@@ -87,7 +97,7 @@ GitBlame.execute = async.void(function(self, opts, done)
 
   local message = nil
 
-  if self.show_commit_message then
+  if self.show_commit_message and commit.sha ~= dummy_commit_sha then
     local message_result = Git.git_commit_message({ cwd = cwd, ref = commit.sha })
 
     if message_result.error ~= nil then
