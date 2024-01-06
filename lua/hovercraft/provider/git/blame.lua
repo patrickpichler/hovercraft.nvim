@@ -51,7 +51,7 @@ GitBlame.is_enabled = async.wrap(function(_, opts, done)
 end, 3)
 
 local function format_commit(commit, message)
-  local commit_date = os.date('%c', tonumber(commit.data['commit-time']))
+  local commit_date = os.date('%c', tonumber(commit.data['committer-time']))
 
   local result = {
     string.format('**Commit**: %s', commit.sha),
@@ -59,7 +59,7 @@ local function format_commit(commit, message)
     string.format('**Author-Mail:** %s', commit.data['author-mail']),
     string.format('**Committer:** %s', commit.data['committer']),
     string.format('**Committer-Mail:** %s', commit.data['committer-mail']),
-    string.format('**Commit-Date:** %s', commit_date),
+    string.format('**Committer-Date:** %s', commit_date),
   }
 
   if message and #message > 0 then
