@@ -39,7 +39,10 @@ function Lsp:execute(opts, done)
       for _, result in pairs(results or {}) do
         if result.contents then
           local lines = result.contents
-          if not vim.tbl_isempty(lines) then
+          if type(lines) == 'string' then
+            done { lines = {lines}, filetype = 'markdown' }
+            return
+          elseif not vim.tbl_isempty(lines) then
             done { lines = lines, filetype = 'markdown' }
             return
           end
