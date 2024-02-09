@@ -118,7 +118,7 @@ GitBlame.execute = async.void(function(self, opts, done)
       return
     end
 
-    message = message_result.message
+    message = message_result.result
   end
 
   done({ lines = format_commit(commit, message), filetype = 'markdown' })
