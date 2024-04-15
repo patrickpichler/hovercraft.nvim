@@ -54,6 +54,18 @@ via lazy.nvim:
       }
     }
   end,
+
+  keys = {
+    { "K", function()
+      local hovercraft = require("hovercraft")
+
+      if hovercraft.is_visible() then
+        hovercraft.enter_popup()
+      else
+        hovercraft.hover()
+      end
+    end },
+  },
 }
 ```
 
