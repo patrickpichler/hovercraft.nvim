@@ -29,7 +29,7 @@ local the_hovercraft = setmetatable({}, {
           table.insert(args, 1, instance)
         end
 
-        return result(table.unpack(args))
+        return result(unpack(args))
       end
     end
 
