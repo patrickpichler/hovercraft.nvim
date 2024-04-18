@@ -1,6 +1,8 @@
 local UI = require('hovercraft.ui')
 
 local eq = assert.are.same
+local is_true = assert.is.True
+local is_false = assert.is.False
 
 ---@param num integer number of dummy providers to create
 ---@return string[]
@@ -105,6 +107,26 @@ describe('hovercraft', function()
       local next_provider_id = UI._get_next_provider_id(providers, current_provider_id, -4, false)
 
       eq(providers[1], next_provider_id)
+    end)
+  end)
+
+  describe('hovercraft._is_empty_content', function()
+    it('should return true for empty content table', function()
+      local result = UI._is_empty_content({})
+
+      is_true(result)
+    end)
+
+    it('should return true for content table with only empty strings', function()
+      local result = UI._is_empty_content({'', ''})
+
+      is_true(result)
+    end)
+
+    it('should return false for content table with non empty lines', function()
+      local result = UI._is_empty_content({'', 'hello'})
+
+      is_false(result)
     end)
   end)
 end)
