@@ -159,6 +159,21 @@ function UI:_close_preview_autocmd(events, winnr, bufnrs)
   end
 end
 
+---@param content string[]
+function M._is_empty_content(content)
+  if vim.tbl_isempty(content) then
+    return true
+  end
+
+  for _, line in ipairs(content) do
+    if line:len() > 0 then
+      return false
+    end
+  end
+
+  return true
+end
+
 ---@param bufnr number
 ---@return string[]
 function UI:_get_active_provider_ids(bufnr, pos)
@@ -234,7 +249,7 @@ function UI:show(opts)
       contents = vim.lsp.util.convert_input_to_markdown_lines(result.lines or {})
     end
 
-    if vim.tbl_isempty(contents) then
+    if M._is_empty_content(contents) then
       contents = { '-- No information available --' }
     end
 
