@@ -146,6 +146,18 @@ function UI:_close_preview_autocmd(events, winnr, bufnrs)
     end,
   })
 
+  vim.api.nvim_create_autocmd('WinClosed', {
+    group = augroup,
+    nested = true,
+    once = true,
+    pattern = tostring(winnr),
+    callback = function()
+      vim.schedule(function()
+        self:hide()
+      end)
+    end,
+  })
+
   if #events > 0 then
     vim.api.nvim_create_autocmd(events, {
       group = augroup,
@@ -426,7 +438,9 @@ function UI:hide()
     return
   end
 
-  vim.api.nvim_win_hide(self.window_config.winnr)
+  if vim.api.nvim_win_is_valid(self.window_config.winnr) then
+    vim.api.nvim_win_hide(self.window_config.winnr)
+  end
 
   local origin_bufnr = self.window_config.origin_bufnr
 
@@ -440,7 +454,9 @@ function UI:is_visible()
     return false
   end
 
-  return vim.api.nvim_win_is_valid(self.window_config.winnr)
+  -- If there is a valid window config, we at least know that there was a non cleaned
+  -- up window, that still can be closed.
+  return true
 end
 
 ---@class Hovercraft.UI.ScrollOptions
