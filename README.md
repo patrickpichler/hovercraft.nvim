@@ -247,7 +247,7 @@ You can disble it to also display the commit message, by passing in `show_commit
 constructing the provider.
 
 ### Diagnostics
-`require('hovercraft.provider.git.blame')`
+`require('hovercraft.provider.diagnostics')`
 
 ![](./assets/hovercraft_diagnostics.png)
 
