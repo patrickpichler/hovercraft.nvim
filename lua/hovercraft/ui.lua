@@ -25,6 +25,7 @@ local M = {}
 ---@field winnr integer
 ---@field bufnr integer
 ---@field origin_bufnr integer bufnr of the buffer that triggered the hover
+---@field augroup integer
 
 ---@alias Hovercraft.UI.OnShow fun(bufnr: number)
 ---@alias Hovercraft.UI.OnHide fun(bufnr: number)
@@ -128,8 +129,9 @@ end
 ---@param events table list of events
 ---@param winnr integer window id of preview window
 ---@param bufnrs table list of buffers where the preview window will remain visible
+---@return number augroup_id
 function UI:_close_preview_autocmd(events, winnr, bufnrs)
-  local augroup = vim.api.nvim_create_augroup('preview_window_' .. winnr, {
+  local augroup = vim.api.nvim_create_augroup('hovercraft_preview_window_' .. winnr, {
     clear = true,
   })
 
@@ -169,6 +171,8 @@ function UI:_close_preview_autocmd(events, winnr, bufnrs)
       end,
     })
   end
+
+  return augroup
 end
 
 ---@param content string[]
@@ -274,7 +278,7 @@ function UI:show(opts)
       result.customize({ bufnr = floating_bufnr, winnr = floating_winnr })
     end
 
-    self:_close_preview_autocmd(
+    local augroup = self:_close_preview_autocmd(
       { 'CursorMoved', 'CursorMovedI', 'InsertCharPre' },
       floating_winnr,
       { floating_bufnr, bufnr }
@@ -288,6 +292,7 @@ function UI:show(opts)
       origin_bufnr = bufnr,
       winnr = floating_winnr,
       providers = active_providers,
+      augroup = augroup,
     }
 
     self:_fire_onshow(bufnr)
@@ -428,6 +433,11 @@ end
 
 ---@param ui Hovercraft.UI
 local function _hide_cleanup(ui)
+  if ui.window_config then
+    -- Remove augroup to not get ghost close requests.
+    vim.api.nvim_del_augroup_by_id(ui.window_config.augroup)
+  end
+
   ui.window_config = nil
   ui.current_run = -1
 end
