@@ -132,7 +132,7 @@ end
 ---@param bufnrs table list of buffers where the preview window will remain visible
 ---@return number augroup_id
 function UI:_close_preview_autocmd(events, winnr, bufnrs)
-  local augroup = vim.api.nvim_create_augroup('hovercraft_preview_window_' .. winnr, {
+  local augroup = vim.api.nvim_create_augroup('hovercraft_preview_window', {
     clear = true,
   })
 
