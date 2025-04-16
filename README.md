@@ -44,6 +44,9 @@ via lazy.nvim:
 
       window = {
         border = 'single',
+
+        -- enable this if you are a user of the MeanderingProgrammer/render-markdown.nvim plugin
+        -- render_markdown_compat_mode = true,
       },
 
       keys = {
@@ -173,6 +176,26 @@ Here is the full example how to use it with `lazy.nvim`:
       end
     end },
   },
+}
+```
+
+### NOTE to MeanderingProgrammer/render-markdown.nvim users
+
+Users of the [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) plugin might encounter
+strange behavior, where the floating window is missing one line. This is caused
+by [this](https://github.com/MeanderingProgrammer/render-markdown.nvim/blob/a2c2493c21cf61e5554ee8bc83da75bd695921da/lua/render-markdown/lib/compat.lua#L27) line in the plugin, where they override any window height set.
+
+To work around this, there is a special compat mode in hovercraft.nvim. To enable,
+set the following property:
+
+```lua
+opts = {
+    -- ...
+    window = {
+        -- enable this if you are a user of the
+        -- MeanderingProgrammer/render-markdown.nvim plugin
+        render_markdown_compat_mode = true,
+    },
 }
 ```
 

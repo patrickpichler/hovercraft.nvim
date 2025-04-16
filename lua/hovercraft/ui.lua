@@ -5,7 +5,7 @@ local M = {}
 
 ---@alias Hovercraft.UI.ShowOpts { current_provider?: string, }
 
----@class Hovercraft.UI.Options
+---@class Hovercraft.UI.Options : vim.lsp.util.open_floating_preview.Opts
 ---@field width? integer
 ---@field height? integer
 ---@field wrap_at? integer
@@ -14,6 +14,7 @@ local M = {}
 ---@field max_width? integer
 ---@field max_height? integer
 ---@field border? Hovercraft.UI.Border
+---@field render_markdown_compat_mode? boolean Compat mode to make float big enough when MeanderingProgrammer/render-markdown.nvim plugin is used.
 
 ---@alias Hovercraft.UI.Border 'none' | 'single' | 'double' | 'rounded' | 'solid' | 'shadow' | Hovercraft.UI.Border.Tile
 ---@alias Hovercraft.UI.Border.Tile { [1]: string, [2]: string } | string
@@ -260,9 +261,20 @@ function UI:show(opts)
     local filetype = result.filetype or 'markdown'
 
     if filetype == 'plaintext' then
-      contents = result.lines or {}
+      contents = result.lines --[[ @as string[] ]] or {}
     else
-      contents = vim.lsp.util.convert_input_to_markdown_lines(result.lines or {})
+      local lines = result.lines or {}
+
+      if lines.value and self.config.render_markdown_compat_mode then
+        -- HACK: This workaround is required, as MeanderingProgrammer/render-markdown.nvim is
+        -- overriding whatever height we set the window when markdown is used. Otherwise
+        -- the hovercraft float will be one line short, as the titlebar is not accounted
+        -- for.
+        -- Line causing issues: https://github.com/MeanderingProgrammer/render-markdown.nvim/blob/a2c2493c21cf61e5554ee8bc83da75bd695921da/lua/render-markdown/lib/compat.lua#L27
+        lines.value = lines.value .. "\n "
+      end
+
+      contents = vim.lsp.util.convert_input_to_markdown_lines(lines)
     end
 
     if M._is_empty_content(contents) then

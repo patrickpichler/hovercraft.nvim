@@ -12,7 +12,7 @@ local Providers = {}
 --- @field pos {[1]: integer, [2]: integer} tuple of [row, col]
 --
 --- @class Hovercraft.Provider.ExecuteResult
---- @field lines? string[]
+--- @field lines? lsp.MarkedString|lsp.MarkedString[]|lsp.MarkupContent|string[]
 --- @field filetype? string
 --- @field customize? fun(opts: {bufnr: integer, winnr: integer})
 
