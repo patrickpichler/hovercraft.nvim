@@ -408,7 +408,7 @@ end
 
 function UI:show_select()
   local bufnr = vim.api.nvim_get_current_buf()
-  local pos = vim.api.nvim_win_get_position(0)
+  local pos = vim.api.nvim_win_get_cursor(0)
 
   ---@type string[]
   local providers
