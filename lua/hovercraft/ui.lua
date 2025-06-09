@@ -129,12 +129,19 @@ end
 ---
 ---@param events table list of events
 ---@param winnr integer window id of preview window
----@param bufnrs table list of buffers where the preview window will remain visible
+---@param bufnr integer buffer id of the underlying buffer that will be configured with close events
 ---@return number augroup_id
-function UI:_close_preview_autocmd(events, winnr, bufnrs)
+function UI:_close_preview_autocmd(events, winnr, bufnr)
   local augroup = vim.api.nvim_create_augroup('hovercraft_preview_window', {
     clear = true,
   })
+
+  -- HACK(patrick.pichler):
+  -- In case somebody tries to launch hovercraft from within a hovercraft window, we fallback
+  -- to use the current buffer to configure the autocommands. This should be whatever the originally
+  -- opened buffer was. This logic might introduce other issues and might needs a bit more thought
+  -- put into it on how to handle such nested cases.
+  local target_bufnr = (vim.api.nvim_buf_is_valid(bufnr) and bufnr) or vim.api.nvim_get_current_buf()
 
   -- close the preview window when entered a buffer that is not
   -- the floating window buffer or the buffer that spawned it
@@ -164,7 +171,7 @@ function UI:_close_preview_autocmd(events, winnr, bufnrs)
   if #events > 0 then
     vim.api.nvim_create_autocmd(events, {
       group = augroup,
-      buffer = bufnrs[2],
+      buffer = target_bufnr,
       callback = function()
         vim.schedule(function()
           self:hide()
@@ -293,7 +300,7 @@ function UI:show(opts)
     local augroup = self:_close_preview_autocmd(
       { 'CursorMoved', 'CursorMovedI', 'InsertCharPre' },
       floating_winnr,
-      { floating_bufnr, bufnr }
+      bufnr
     )
 
     add_title(floating_winnr, title, title_length)

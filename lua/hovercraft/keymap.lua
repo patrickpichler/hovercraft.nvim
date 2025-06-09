@@ -170,8 +170,9 @@ end
 
 ---@param bufnr number
 function KeyMap:disarm(bufnr)
-  if not self.armed_state then
-    -- if no armed state is set, it means, we are not active and have nothing to do
+  if not self.armed_state or not vim.api.nvim_buf_is_valid(bufnr) then
+    -- if no armed state is set or the given bufnr is not valid anymore,
+    -- we are not active and have nothing to do
     return
   end
 
