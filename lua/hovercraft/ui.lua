@@ -488,7 +488,7 @@ end
 
 ---@return boolean
 function UI:is_visible()
-  if not self.window_config then
+  if not self.window_config or not vim.api.nvim_win_is_valid(self.window_config.winnr) then
     return false
   end
 
