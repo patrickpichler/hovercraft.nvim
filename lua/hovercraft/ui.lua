@@ -476,7 +476,7 @@ function UI:winClosed()
   -- If the window is still visible, the close method was probably called
   -- async and too late. We hence skip the logic, as we would otherwise
   -- mess up with another already opened popup.
-  if vim.api.nvim_win_is_valid(self.window_config.winnr) then
+  if not self.window_config or vim.api.nvim_win_is_valid(self.window_config.winnr) then
     return
   end
 
