@@ -143,6 +143,11 @@ end
 
 ---@param bufnr number
 function KeyMap:arm(bufnr)
+  -- If for whatever reason the bufnr is not a valid buffer, there is nothing we can do.
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return
+  end
+
   ---@type Hovercraft.KeyMap.ArmedState.MappingTable
   local active_mappings = {}
 
