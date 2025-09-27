@@ -364,10 +364,8 @@ end
 function UI:show_next(opts)
   opts = vim.tbl_deep_extend('keep', opts or {}, { cycle = true, step = 1 })
 
-  vim.validate {
-    cycle = { opts.cycle, 'boolean' },
-    step = { opts.step, 'number' },
-  }
+  vim.validate('cycle', opts.cycle, 'boolean')
+  vim.validate('step', opts.step, 'number')
 
   local bufnr = vim.api.nvim_get_current_buf()
   ---@type string
@@ -506,9 +504,7 @@ function UI:scroll(opts)
     return
   end
 
-  vim.validate {
-    delta = { opts.delta, 'number' }
-  }
+  vim.validate('delta', opts.delta, 'number')
 
   local count = math.abs(opts.delta)
   local cmd

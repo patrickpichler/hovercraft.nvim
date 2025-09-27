@@ -20,9 +20,7 @@ GithubApi.ERRORS = {
 
 ---@param token string | fun(): string? token used for authentication with Github
 function GithubApi:update_token(token)
-  vim.validate {
-    token = { token, { 'function', 'string', 'nil' } }
-  }
+  vim.validate('token', token, {'function', 'string', 'nil'})
 
   self._token = token
 end
@@ -115,9 +113,7 @@ end
 ---@param self GithubApi
 ---@param repo string
 GithubApi.get_repo = async.wrap(function(self, repo, done)
-  vim.validate {
-    repo = { repo, 'string' }
-  }
+  vim.validate('repo', repo, 'string')
 
   local url = string.format('https://api.github.com/repos/%s', repo)
 
@@ -137,9 +133,7 @@ GithubApi.get_repo = async.wrap(function(self, repo, done)
 end, 3)
 
 GithubApi.get_repo_readme = async.wrap(function(self, repo, done)
-  vim.validate {
-    repo = { repo, 'string' }
-  }
+  vim.validate('repo', repo, 'string')
 
   local url = string.format('https://api.github.com/repos/%s/readme', repo)
 
@@ -159,10 +153,8 @@ GithubApi.get_repo_readme = async.wrap(function(self, repo, done)
 end, 3)
 
 GithubApi.get_issue = async.wrap(function(self, repo, issue, done)
-  vim.validate {
-    repo = { repo, 'string' },
-    issue = { issue, { 'string', 'number' } },
-  }
+  vim.validate('repo', repo, 'string')
+  vim.validate('issue', issue, {'string', 'number'})
 
   if type(issue) == 'number' then
     issue = tostring(issue)
@@ -187,9 +179,7 @@ end, 4)
 ---@param user string
 ---@return table?
 GithubApi.get_user = async.wrap(function(self, user, done)
-  vim.validate {
-    repo = { user, 'string' },
-  }
+  vim.validate('user', user, 'string')
 
   local url = string.format('https://api.github.com/users/%s', user)
   local args = self:_build_common_curl_args(url)
@@ -210,9 +200,7 @@ end, 3)
 local function new(opts)
   opts = opts or {}
 
-  vim.validate {
-    token = { opts.token, { 'function', 'string', 'nil' } }
-  }
+  vim.validate('token', opts.token, {'function', 'string', 'nil'})
 
   return setmetatable({
     _token = opts.token,

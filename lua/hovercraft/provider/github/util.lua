@@ -1,4 +1,3 @@
-local async = require('plenary.async')
 local util = require('hovercraft.util')
 
 local M = {}
@@ -8,13 +7,15 @@ function M._extract_issue(word)
 end
 
 function M._extract_repo_issue(word)
-  local _, _, user, repo, issue = word:find('^([%a%d._-]+)/([%a%d._-]+)#(%d+)$')
+  local user, repo, issue, type
+
+  _, _, user, repo, issue = word:find('^([%a%d._-]+)/([%a%d._-]+)#(%d+)$')
 
   if user and repo and issue then
     return user and repo and issue and { user, repo, issue }
   end
 
-  local _, _, user, repo, type, issue = word:find('^https://github.com/([%a%d._-]+)/([%a%d._-]+)/(%a*)/(%d+)$')
+  _, _, user, repo, type, issue = word:find('^https://github.com/([%a%d._-]+)/([%a%d._-]+)/(%a*)/(%d+)$')
 
   if vim.tbl_contains({ 'issues', 'pulls' }, type) then
     return user and repo and issue and { user, repo, issue }

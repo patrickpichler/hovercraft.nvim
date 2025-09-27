@@ -20,9 +20,7 @@ KeyMap.__index = KeyMap
 ---@param key string raw lhs key from mapping
 ---@return string key in normalized form
 function M._normalize_key(key)
-  vim.validate {
-    key = { key, 'string' }
-  }
+  vim.validate('key', key, 'string')
 
   -- i am not 100% sure if this will work out in all cases though, but i
   -- have yet to see it break

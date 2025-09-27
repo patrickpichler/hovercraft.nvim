@@ -169,15 +169,13 @@ end
 M.git_blame = async.wrap(function(opts, done)
   opts = opts or {}
 
-  vim.validate {
-    file = { opts.file, 'string' },
-    cwd = { opts.cwd, { 'string', 'nil' } },
-    line = { opts.line, function(v)
-      return type(v) == "table" and
-          ((#v == 1 and type(v[1]) == "number")
-            or (#v == 2 and type(v[1]) == "number" and type(v[2]) == "number"))
-    end, 'two or one number' }
-  }
+  vim.validate('file', opts.file, 'string')
+  vim.validate('cwd', opts.cwd, { 'string', 'nil' })
+  vim.validate('line', opts.line, function(v)
+    return type(v) == "table" and
+        ((#v == 1 and type(v[1]) == "number")
+          or (#v == 2 and type(v[1]) == "number" and type(v[2]) == "number"))
+  end, 'two or one number')
 
   local line_from = opts.line[1]
   local line_to = #opts.line == 2 and opts.line[2] or line_from
@@ -213,10 +211,8 @@ end, 2)
 M.git_commit_message = async.wrap(function(opts, done)
   opts = opts or {}
 
-  vim.validate {
-    ref = { opts.ref, 'string' },
-    cwd = { opts.cwd, { 'string', 'nil' } },
-  }
+  vim.validate('ref', opts.ref, 'string')
+  vim.validate('cwd', opts.cwd, { 'string', 'nil' })
 
   Job:new({
     command = 'git',

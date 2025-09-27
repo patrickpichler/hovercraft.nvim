@@ -14,7 +14,7 @@ function Lsp:is_enabled(opts)
   local bufnr = opts.bufnr
 
   for _, client in pairs(util.get_clients()) do
-    if client.supports_method('textDocument/hover', { bufnr = bufnr }) then
+    if client:supports_method('textDocument/hover', bufnr) then
       return true
     end
   end
@@ -40,7 +40,7 @@ function Lsp:execute(opts, done)
         if result.contents then
           local lines = result.contents
           if type(lines) == 'string' then
-            done { lines = {lines}, filetype = 'markdown' }
+            done { lines = { lines }, filetype = 'markdown' }
             return
           elseif not vim.tbl_isempty(lines) then
             done { lines = lines, filetype = 'markdown' }

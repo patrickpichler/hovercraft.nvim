@@ -86,7 +86,7 @@ function GithubIssue:_handle_issue(bufnr, issue, success_handler, failure_handle
   local info = GithubUtil._extract_repo_info(remote_result.result)
 
   if not info then
-    failure_handler { error = ERRORS.NoGitRepo, result = string.format('cannot extract github repo for url `%s`', remote) }
+    failure_handler { error = ERRORS.NoGitRepo, result = string.format('cannot extract github repo for url `%s`', remote_result.result) }
     return
   end
 
