@@ -7,12 +7,14 @@ local M = {}
 ---@field _highest_priority number
 local Providers = {}
 
+---@alias Hovercraft.Line lsp.MarkedString|lsp.MarkupContent
+
 --- @class Hovercraft.Provider.ExecuteOptions
 --- @field bufnr integer
 --- @field pos {[1]: integer, [2]: integer} tuple of [row, col]
 --
 --- @class Hovercraft.Provider.ExecuteResult
---- @field lines? lsp.MarkedString|lsp.MarkedString[]|lsp.MarkupContent|string[]
+--- @field lines? Hovercraft.Line|Hovercraft.Line[]
 --- @field filetype? string
 --- @field customize? fun(opts: {bufnr: integer, winnr: integer})
 
