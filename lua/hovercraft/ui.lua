@@ -5,12 +5,15 @@ local M = {}
 
 ---@alias Hovercraft.UI.ShowOpts { current_provider?: string, }
 
+---@class Hovercraft.UI.Padding
+---@field left? integer
+---@field right? integer
+
 ---@class Hovercraft.UI.Options : vim.lsp.util.open_floating_preview.Opts
 ---@field width? integer
 ---@field height? integer
 ---@field wrap_at? integer
----@field pad_top? integer
----@field pad_bottom? integer
+---@field padding? Hovercraft.UI.Padding
 ---@field max_width? integer
 ---@field max_height? integer
 ---@field border? Hovercraft.UI.Border
@@ -213,6 +216,19 @@ function UI:_get_active_provider_ids(bufnr, pos)
   return result
 end
 
+---@param contents string[]
+---@param padding Hovercraft.UI.Padding
+local function apply_padding(contents, padding)
+  if padding.left or padding.right then
+    local pad_left = string.rep(" ", padding.left)
+    local pad_right = string.rep(" ", padding.right)
+
+    for i, _ in ipairs(contents) do
+      contents[i] = pad_left .. contents[i] .. pad_right
+    end
+  end
+end
+
 ---@param opts? Hovercraft.UI.ShowOpts
 function UI:show(opts)
   opts = opts or {}
@@ -290,8 +306,22 @@ function UI:show(opts)
 
     local title, title_length = self:_build_title(provider_id, active_providers)
 
-    local window_opts = vim.tbl_deep_extend('force', self.config, opts, { close_events = {} })
-    local floating_bufnr, floating_winnr = vim.lsp.util.open_floating_preview(contents, filetype, window_opts)
+    local window_opts = vim.tbl_deep_extend('force', self.config, opts)
+
+    if window_opts.padding then
+      apply_padding(contents, window_opts.padding)
+    end
+
+    local preview_opts = {
+      width = window_opts.width,
+      height = window_opts.height,
+      wrap_at = window_opts.wrap_at,
+      max_width = window_opts.max_width,
+      max_height = window_opts.max_height,
+      border = window_opts.border,
+      close_events = {}
+    }
+    local floating_bufnr, floating_winnr = vim.lsp.util.open_floating_preview(contents, filetype, preview_opts)
 
     if result.customize then
       result.customize({ bufnr = floating_bufnr, winnr = floating_winnr })

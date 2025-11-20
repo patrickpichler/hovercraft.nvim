@@ -22,6 +22,10 @@ local defaults = {
 
   window = {
     border = 'single',
+    padding = {
+      left = 0,
+      right = 0,
+    },
   },
 
   keys = {

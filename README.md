@@ -45,6 +45,11 @@ via lazy.nvim:
       window = {
         border = 'single',
 
+        padding = {
+          left = 0,
+          right = 0,
+        },
+
         -- enable this if you are a user of the MeanderingProgrammer/render-markdown.nvim plugin
         -- render_markdown_compat_mode = true,
       },
