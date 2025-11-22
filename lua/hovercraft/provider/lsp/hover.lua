@@ -85,10 +85,9 @@ function Lsp:execute(opts, done)
       else
         local res = result.contents
 
-        if vim.islist(contents) then
-          ---@cast res Hovercraft.Line[]
+        if type(res) == "table" and #res > 0 then
           vim.list_extend(contents, res)
-        else
+        elseif (type(res) == "table" and res.value) or type(res) then
           contents[#contents + 1] = res
         end
       end
